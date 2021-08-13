@@ -11,8 +11,10 @@ class Header extends React.Component {
 
   onKeyPress = (e) => {
     if (e.key === 'Enter') {
-      this.props.createTodo(this.state.value);
-      this.setState({value: ""});
+      if (e.target.value.trim()) {
+        this.props.createTodo(this.state.value);
+        this.setState({value: ""});
+      }
     }
   }
 

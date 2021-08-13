@@ -15,20 +15,16 @@ class TodoList extends React.Component {
           <label htmlFor="toggle-all">Mark all as complete</label>
           <ul className="todo-list">
             {
-              this.props.todos.map(
-                item => {
-                  if (this.props.currentFilter === "all" ||
-                    (this.props.currentFilter === "active" && !item.completed) ||
-                    (this.props.currentFilter === "completed" && item.completed)) {
-                    return  <TodoItem
-                      key={item.id}
-                      item={item}
-                      toggleTodo={this.props.toggleTodo}
-                      removeTodo={this.props.removeTodo}
-                    />
-                  }
-                  return undefined;
-                }
+              this.props.todos.filter(item => this.props.currentFilter === "all" ||
+                (this.props.currentFilter === "active" && !item.completed) ||
+                (this.props.currentFilter === "completed" && item.completed)).map(
+                item =>
+                  <TodoItem
+                    key={item.id}
+                    item={item}
+                    toggleTodo={this.props.toggleTodo}
+                    removeTodo={this.props.removeTodo}
+                  />
               )
             }
           </ul>

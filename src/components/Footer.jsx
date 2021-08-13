@@ -4,10 +4,7 @@ import FilterItem from "./FilterItem";
 class Footer extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      filterList: ["all", "active", "completed"]
-    }
+    this.filterList = ["all", "active", "completed"];
   }
 
   render() {
@@ -19,7 +16,7 @@ class Footer extends React.Component {
           </span>
           <ul className="filters">
             {
-              this.state.filterList.map(
+              this.filterList.map(
                 item =>
                   <FilterItem
                     key={item}
@@ -30,6 +27,12 @@ class Footer extends React.Component {
               )
             }
           </ul>
+          <button
+            className="clear-completed"
+            onClick={this.props.removeCompleted}
+          >
+            Clear completed
+          </button>
         </footer>
       </div>
     );

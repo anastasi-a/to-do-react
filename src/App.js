@@ -22,6 +22,7 @@ class App extends React.Component {
         {id: Date.now(), title, completed: false}
         ]
     });
+    this.checkToggleStatus();
   }
 
   toggleTodo = (id) => {
@@ -33,6 +34,7 @@ class App extends React.Component {
             item
       )
     });
+    this.checkToggleStatus();
   }
 
   toggleAll = (isCompleted) => {
@@ -50,7 +52,21 @@ class App extends React.Component {
       todos: [
         ...this.state.todos.filter(item => item.id !== id)
       ]
-    })
+    });
+    this.checkToggleStatus();
+  }
+
+  removeCompleted = () => {
+    this.setState({
+      todos: [
+        ...this.state.todos.filter(item => !item.completed)
+      ]
+    });
+
+    this.setState({
+      allCompleted: false,
+      currentFilter: this.state.currentFilter === 'completed' ? 'all' : this.state.currentFilter
+    });
   }
 
   filterTodo = (filter) => {
@@ -59,25 +75,43 @@ class App extends React.Component {
     });
   }
 
+  checkToggleStatus = () => {
+    setTimeout(() => {
+      this.setState({
+        allCompleted:
+          this.state.todos.length === 0 || this.state.todos.filter(item => !item.completed).length ? false :
+          this.state.todos.length === this.state.todos.filter(item => item.completed).length ? true :
+          this.state.allCompleted
+      });
+    }, 100);
+  }
+
   render() {
     return (
       <section className="todoapp">
         <Header
           createTodo={this.createTodo}
         />
-        <TodoList
-          todos={this.state.todos}
-          allCompleted={this.state.allCompleted}
-          currentFilter={this.state.currentFilter}
-          toggleTodo={this.toggleTodo}
-          toggleAll={this.toggleAll}
-          removeTodo={this.removeTodo}
-        />
-        <Footer
-          todoCount={this.state.todos.length}
-          currentFilter={this.state.currentFilter}
-          filterTodo={this.filterTodo}
-        />
+        {
+          this.state.todos.length ?
+            <TodoList
+            todos={this.state.todos}
+            allCompleted={this.state.allCompleted}
+            currentFilter={this.state.currentFilter}
+            toggleTodo={this.toggleTodo}
+            toggleAll={this.toggleAll}
+            removeTodo={this.removeTodo}
+          /> : ''
+        }
+        {
+          this.state.todos.length ?
+            <Footer
+              todoCount={this.state.todos.filter(item => !item.completed).length}
+              currentFilter={this.state.currentFilter}
+              filterTodo={this.filterTodo}
+              removeCompleted={this.removeCompleted}
+            />: ''
+        }
       </section>
     );
   }
