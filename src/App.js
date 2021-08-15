@@ -3,6 +3,7 @@ import './App.css';
 import Header from "./components/Header";
 import TodoList from "./components/TodoList";
 import Footer from "./components/Footer";
+import { Filter } from "./utils/Enums";
 
 class App extends React.Component {
   constructor(props) {
@@ -11,7 +12,7 @@ class App extends React.Component {
     this.state = {
       todos: [],
       allCompleted: false,
-      currentFilter: "all"
+      currentFilter: Filter.all
     };
   }
 
@@ -21,8 +22,7 @@ class App extends React.Component {
         ...this.state.todos,
         {id: Date.now(), title, completed: false}
         ]
-    });
-    this.checkToggleStatus();
+    }, () => this.checkToggleStatus());
   }
 
   toggleTodo = (id) => {
@@ -33,8 +33,18 @@ class App extends React.Component {
             {...item, completed: !item.completed} :
             item
       )
+    }, () => this.checkToggleStatus());
+  }
+
+  updateTitle = (id, title) => {
+    this.setState({
+      todos: this.state.todos.map(
+        item =>
+          item.id === id ?
+            {...item, title: title} :
+            item
+      )
     });
-    this.checkToggleStatus();
   }
 
   toggleAll = (isCompleted) => {
@@ -52,8 +62,7 @@ class App extends React.Component {
       todos: [
         ...this.state.todos.filter(item => item.id !== id)
       ]
-    });
-    this.checkToggleStatus();
+    }, () => this.checkToggleStatus());
   }
 
   removeCompleted = () => {
@@ -65,25 +74,23 @@ class App extends React.Component {
 
     this.setState({
       allCompleted: false,
-      currentFilter: this.state.currentFilter === 'completed' ? 'all' : this.state.currentFilter
+      currentFilter: this.state.currentFilter === Filter.completed ? Filter.all : this.state.currentFilter
     });
   }
 
-  filterTodo = (filter) => {
+  filterTodo = (filterId) => {
     this.setState({
-      currentFilter: filter
+      currentFilter: filterId
     });
   }
 
   checkToggleStatus = () => {
-    setTimeout(() => {
-      this.setState({
-        allCompleted:
-          this.state.todos.length === 0 || this.state.todos.filter(item => !item.completed).length ? false :
-          this.state.todos.length === this.state.todos.filter(item => item.completed).length ? true :
-          this.state.allCompleted
-      });
-    }, 100);
+    this.setState({
+      allCompleted:
+        this.state.todos.length === 0 || this.state.todos.filter(item => !item.completed).length ? false :
+        this.state.todos.length === this.state.todos.filter(item => item.completed).length ? true :
+        this.state.allCompleted
+    });
   }
 
   render() {
@@ -93,24 +100,25 @@ class App extends React.Component {
           createTodo={this.createTodo}
         />
         {
-          this.state.todos.length ?
+          this.state.todos.length > 0 &&
             <TodoList
             todos={this.state.todos}
             allCompleted={this.state.allCompleted}
             currentFilter={this.state.currentFilter}
             toggleTodo={this.toggleTodo}
+            updateTitle={this.updateTitle}
             toggleAll={this.toggleAll}
             removeTodo={this.removeTodo}
-          /> : ''
+          />
         }
         {
-          this.state.todos.length ?
+          this.state.todos.length > 0 &&
             <Footer
               todoCount={this.state.todos.filter(item => !item.completed).length}
               currentFilter={this.state.currentFilter}
               filterTodo={this.filterTodo}
               removeCompleted={this.removeCompleted}
-            />: ''
+            />
         }
       </section>
     );

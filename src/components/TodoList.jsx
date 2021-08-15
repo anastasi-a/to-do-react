@@ -1,7 +1,18 @@
 import React from "react";
 import TodoItem from "./TodoItem";
+import { Filter } from "../utils/Enums";
 
 class TodoList extends React.Component {
+  filterTodo = () => {
+    switch (this.props.currentFilter) {
+      case Filter.active:
+        return this.props.todos.filter(item => !item.completed);
+      case Filter.completed:
+        return this.props.todos.filter(item => item.completed);
+      default:
+        return this.props.todos;
+    }
+  }
 
   render() {
     return(
@@ -15,15 +26,14 @@ class TodoList extends React.Component {
           <label htmlFor="toggle-all">Mark all as complete</label>
           <ul className="todo-list">
             {
-              this.props.todos.filter(item => this.props.currentFilter === "all" ||
-                (this.props.currentFilter === "active" && !item.completed) ||
-                (this.props.currentFilter === "completed" && item.completed)).map(
+              this.filterTodo().map(
                 item =>
                   <TodoItem
                     key={item.id}
                     item={item}
                     toggleTodo={this.props.toggleTodo}
                     removeTodo={this.props.removeTodo}
+                    updateTitle={this.props.updateTitle}
                   />
               )
             }
