@@ -3,10 +3,14 @@ import React from "react";
 class TodoItem extends React.Component {
   constructor(props) {
     super(props);
+    console.log("constructor");
+
+    // this.interval = null;
 
     this.state = {
       isEditing: false,
-      value: ""
+      value: "",
+      count: 0
     }
   }
 
@@ -26,6 +30,28 @@ class TodoItem extends React.Component {
   saveChanges = () => {
     this.setState({isEditing: false});
     this.props.updateTitle(this.props.item.id, this.state.value);
+  }
+
+  // old way to check if component should be updated,
+  // instead of it React.PureComponent is used
+  // shouldComponentUpdate(nextProps, nextState, nextContext) {
+  //   return nextProps.item.completed !== this.props.item.completed;
+  // }
+
+  componentDidMount() {
+    console.log("componentDidMount");
+    // this.interval = setInterval(() => {
+    //   this.setState({count: this.state.count + 1})
+    // }, 1000);
+  }
+
+  componentDidUpdate() {
+    console.log("componentDidUpdate");
+  }
+
+  componentWillUnmount() {
+    console.log("componentWillUnmount");
+    // clearInterval(this.interval);
   }
 
   render() {
